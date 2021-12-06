@@ -1,0 +1,5 @@
+(executable
+ (name bench)
+ (modes exe byte_complete)
+ (ocamlopt_flags -O3 -linkall -S)
+ (libraries shapeshifter core core_bench memtrace))

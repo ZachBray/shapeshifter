@@ -1,0 +1,6 @@
+(library
+ (name shapeshifter)
+ (foreign_stubs
+  (language c)
+  (names unsafe_buffer))
+ (ocamlopt_flags -O3 -linkall -S))

@@ -1,0 +1,8 @@
+# dune build artefacts
+_build
+
+# clangd indexes
+.cache
+
+# c compiler configuration (with absolute paths)
+compile_commands.json
