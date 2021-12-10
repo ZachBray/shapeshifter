@@ -3,7 +3,7 @@ opam-version: "2.0"
 synopsis: "A low-level library for working with data in buffers"
 maintainer: ["zachbray+opam@gmail.com"]
 authors: ["Zachary Bray"]
-license: "Apache-2.0"
+license: "ISC"
 homepage: "https://github.com/ZachBray/shapeshifter"
 bug-reports: "https://github.com/ZachBray/shapeshifter/issues"
 depends: [

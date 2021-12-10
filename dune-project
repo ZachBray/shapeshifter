@@ -2,7 +2,7 @@
 (name shapeshifter)
 
 (source (github ZachBray/shapeshifter))
-(license Apache-2.0)
+(license ISC)
 (authors "Zachary Bray")
 (maintainers "zachbray+opam@gmail.com")
 
