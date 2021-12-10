@@ -1,5 +1,6 @@
 # dune build artefacts
 _build
+*.install
 
 # clangd indexes
 .cache
