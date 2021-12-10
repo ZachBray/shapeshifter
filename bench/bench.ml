@@ -3,7 +3,6 @@ open Core_bench
 open Shapeshifter
 
 let () =
-  Memtrace.trace_if_requested () ;
   let unsafe = Unsafe_buffer.acquire ~byte_length:4l in
   Command.run
     (Bench.make_command
