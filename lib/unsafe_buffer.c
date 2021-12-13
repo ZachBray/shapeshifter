@@ -17,8 +17,9 @@ CAMLprim value unsafe_buffer_acquire(int32_t byte_length) {
 
 CAMLprim value unsafe_buffer_acquire_byte(value byte_length) {
   CAMLparam1(byte_length);
-  value buffer = unsafe_buffer_acquire(Int32_val(byte_length));
-  CAMLreturn (buffer);
+  CAMLlocal1(buffer);
+  buffer = unsafe_buffer_acquire(Int32_val(byte_length));
+  CAMLreturn(buffer);
 }
 
 CAMLprim void unsafe_buffer_release(value buffer) {
@@ -29,6 +30,7 @@ CAMLprim void unsafe_buffer_release(value buffer) {
 CAMLprim void unsafe_buffer_release_byte(value buffer) {
   CAMLparam1(buffer);
   unsafe_buffer_release(buffer);
+  CAMLreturn0;
 }
 
 CAMLprim int32_t unsafe_buffer_get_i8(int32_t offset, value buffer) {
@@ -37,7 +39,10 @@ CAMLprim int32_t unsafe_buffer_get_i8(int32_t offset, value buffer) {
 }
 
 CAMLprim value unsafe_buffer_get_i8_byte(value offset, value buffer) {
-  return caml_copy_int32(unsafe_buffer_get_i8(Int32_val(offset), buffer));
+  CAMLparam2(offset, buffer);
+  CAMLlocal1(val);
+  val = caml_copy_int32(unsafe_buffer_get_i8(Int32_val(offset), buffer));
+  CAMLreturn(val);
 }
 
 CAMLprim int32_t unsafe_buffer_get_i32(int32_t offset, value buffer) {
@@ -46,7 +51,10 @@ CAMLprim int32_t unsafe_buffer_get_i32(int32_t offset, value buffer) {
 }
 
 CAMLprim value unsafe_buffer_get_i32_byte(value offset, value buffer) {
-  return caml_copy_int32(unsafe_buffer_get_i32(Int32_val(offset), buffer));
+  CAMLparam2(offset, buffer);
+  CAMLlocal1(val);
+  val = caml_copy_int32(unsafe_buffer_get_i32(Int32_val(offset), buffer));
+  CAMLreturn(val);
 }
 
 CAMLprim double unsafe_buffer_get_f64(int32_t offset, value buffer) {
@@ -55,7 +63,10 @@ CAMLprim double unsafe_buffer_get_f64(int32_t offset, value buffer) {
 }
 
 CAMLprim value unsafe_buffer_get_f64_byte(value offset, value buffer) {
-  return caml_copy_double(unsafe_buffer_get_f64(Int32_val(offset), buffer));
+  CAMLparam2(offset, buffer);
+  CAMLlocal1(val);
+  val = caml_copy_double(unsafe_buffer_get_f64(Int32_val(offset), buffer));
+  CAMLreturn(val);
 }
 
 CAMLprim void unsafe_buffer_set_i8(int32_t offset, int32_t v, value buffer) {
@@ -65,7 +76,9 @@ CAMLprim void unsafe_buffer_set_i8(int32_t offset, int32_t v, value buffer) {
 }
 
 CAMLprim void unsafe_buffer_set_i8_byte(value offset, value v, value buffer) {
+  CAMLparam3(offset, v, buffer);
   unsafe_buffer_set_i8(Int32_val(offset), Int32_val(v), buffer);
+  CAMLreturn0;
 }
 
 CAMLprim void unsafe_buffer_set_i32(int32_t offset, int32_t v, value buffer) {
@@ -74,7 +87,9 @@ CAMLprim void unsafe_buffer_set_i32(int32_t offset, int32_t v, value buffer) {
 }
 
 CAMLprim void unsafe_buffer_set_i32_byte(value offset, value v, value buffer) {
+  CAMLparam3(offset, v, buffer);
   unsafe_buffer_set_i32(Int32_val(offset), Int32_val(v), buffer);
+  CAMLreturn0;
 }
 
 CAMLprim void unsafe_buffer_set_f64(int32_t offset, double v, value buffer) {
@@ -83,5 +98,7 @@ CAMLprim void unsafe_buffer_set_f64(int32_t offset, double v, value buffer) {
 }
 
 CAMLprim void unsafe_buffer_set_f64_byte(value offset, value v, value buffer) {
+  CAMLparam3(offset, v, buffer);
   unsafe_buffer_set_f64(Int32_val(offset), Double_val(v), buffer);
+  CAMLreturn0;
 }
