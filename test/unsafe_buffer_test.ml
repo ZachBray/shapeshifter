@@ -5,21 +5,20 @@ open Shapeshifter
 module type Test_case_iface = sig
   type t [@@deriving quickcheck, sexp]
 
-  val value_byte_length : int32
+  val value_byte_length : int
 
-  val set_value : offset:int32 -> value:t -> Unsafe_buffer.t -> unit
+  val set_value : offset:int -> value:t -> Unsafe_buffer.t -> unit
 
-  val get_value : offset:int32 -> Unsafe_buffer.t -> t
+  val get_value : offset:int -> Unsafe_buffer.t -> t
 
   val assert_same : t -> t -> unit
 end
 
 module RoundTripTests (C : Test_case_iface) = struct
-  open Int32
   open C
 
   (** The length (in bytes) of the buffer to construct for each test. *)
-  let buffer_length = 64l
+  let buffer_length = 64
 
   (** Creates a buffer of length [buffer_byte_length], passes it to the
       supplied function [f], and releases the buffer, regardless of whether
@@ -40,7 +39,7 @@ module RoundTripTests (C : Test_case_iface) = struct
 
   type test_case =
     { offset:
-        (int32[@quickcheck.generator Generator.int32_inclusive 0l max_offset])
+        (int[@quickcheck.generator Generator.int_inclusive 0 max_offset])
     ; value: t }
   [@@deriving quickcheck, sexp]
 
@@ -53,7 +52,7 @@ module RoundTripTests (C : Test_case_iface) = struct
       end )
       ~f:(fun {offset; value} ->
         use_buffer (fun buffer ->
-            let is_valid_offset = offset < buffer_length && offset >= 0l in
+            let is_valid_offset = offset < buffer_length && offset >= 0 in
             if is_valid_offset then (
               set_value ~offset ~value buffer ;
               let found_value = get_value ~offset buffer in
@@ -62,39 +61,92 @@ module RoundTripTests (C : Test_case_iface) = struct
 end
 
 module I8_test_case : Test_case_iface = struct
-  type t =
-    (int32[@quickcheck.generator Generator.int32_inclusive (-128l) 127l])
+  type t = (int[@quickcheck.generator Generator.int_inclusive (-128) 127])
   [@@deriving quickcheck, sexp]
 
-  let value_byte_length = 4l
+  let value_byte_length = 4
 
   let set_value = Unsafe_buffer.set_i8
 
   let get_value = Unsafe_buffer.get_i8
 
-  let assert_same expect actual = [%test_result: int32] ~expect actual
+  let assert_same expect actual = [%test_result: int] ~expect actual
 end
 
 let%test_module "i8" = (module RoundTripTests (I8_test_case))
 
 module I32_test_case : Test_case_iface = struct
-  type t = int32 [@@deriving quickcheck, sexp]
+  type t =
+    (int
+    [@quickcheck.generator
+      Generator.int_inclusive
+        (Int32.to_int_exn Int32.min_value)
+        (Int32.to_int_exn Int32.max_value)] )
+  [@@deriving quickcheck, sexp]
 
-  let value_byte_length = 4l
+  let value_byte_length = 4
 
   let set_value = Unsafe_buffer.set_i32
 
   let get_value = Unsafe_buffer.get_i32
 
-  let assert_same expect actual = [%test_result: int32] ~expect actual
+  let assert_same expect actual = [%test_result: int] ~expect actual
 end
 
 let%test_module "i32" = (module RoundTripTests (I32_test_case))
 
+module I32_boxed_test_case : Test_case_iface = struct
+  type t = int32 [@@deriving quickcheck, sexp]
+
+  let value_byte_length = 4
+
+  let set_value = Unsafe_buffer.set_i32_boxed
+
+  let get_value = Unsafe_buffer.get_i32_boxed
+
+  let assert_same expect actual = [%test_result: int32] ~expect actual
+end
+
+let%test_module "i32_boxed" = (module RoundTripTests (I32_boxed_test_case))
+
+module I63_test_case : Test_case_iface = struct
+  type t =
+    (int
+    [@quickcheck.generator
+      Generator.int_inclusive
+        (Int63.to_int_exn Int63.min_value)
+        (Int63.to_int_exn Int63.max_value)] )
+  [@@deriving quickcheck, sexp]
+
+  let value_byte_length = 8
+
+  let set_value = Unsafe_buffer.set_i63
+
+  let get_value = Unsafe_buffer.get_i63
+
+  let assert_same expect actual = [%test_result: int] ~expect actual
+end
+
+let%test_module "i63" = (module RoundTripTests (I63_test_case))
+
+module I64_boxed_test_case : Test_case_iface = struct
+  type t = int64 [@@deriving quickcheck, sexp]
+
+  let value_byte_length = 8
+
+  let set_value = Unsafe_buffer.set_i64_boxed
+
+  let get_value = Unsafe_buffer.get_i64_boxed
+
+  let assert_same expect actual = [%test_result: int64] ~expect actual
+end
+
+let%test_module "i64_boxed" = (module RoundTripTests (I64_boxed_test_case))
+
 module F64_test_case : Test_case_iface = struct
   type t = float [@@deriving quickcheck, sexp]
 
-  let value_byte_length = 8l
+  let value_byte_length = 8
 
   let set_value = Unsafe_buffer.set_f64
 
